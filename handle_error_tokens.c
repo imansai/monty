@@ -11,7 +11,7 @@ void setErrorToken(int errorCode)
     char *exitStr = NULL;
     char **newTokens = NULL;
 
-    tokensLength = getTokensLength();
+    tokensLength = tokenArrLen();
     newTokens = malloc(sizeof(char *) * (tokensLength + 2));
     if (!opTokens)
     {
