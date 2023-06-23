@@ -1,17 +1,17 @@
 #include "monty.h"
 
-void montyPush(stack_t **stack, unsigned int lineNumber);
-void montyPall(stack_t **stack, unsigned int lineNumber);
-void montyPint(stack_t **stack, unsigned int lineNumber);
-void montyPop(stack_t **stack, unsigned int lineNumber);
-void montySwap(stack_t **stack, unsigned int lineNumber);
+void montyPush(stack_t **stack, unsigned int lineNum);
+void montyPall(stack_t **stack, unsigned int lineNum);
+void montyPint(stack_t **stack, unsigned int lineNum);
+void montyPop(stack_t **stack, unsigned int lineNum);
+void montySwap(stack_t **stack, unsigned int lineNum);
 
 /**
  * montyPush - Pushes a value to a stack_t linked list.
  * @stack: A pointer to the top mode node of a stack_t linked list.
- * @lineNumber: The current working line number of a Monty bytecodes file.
+ * @lineNum: The current working line number of a Monty bytecodes file.
  */
-void montyPush(stack_t **stack, unsigned int lineNumber)
+void montyPush(stack_t **stack, unsigned int lineNum)
 {
     stack_t *tempNode, *newNode;
     int i;
@@ -25,7 +25,7 @@ void montyPush(stack_t **stack, unsigned int lineNumber)
 
     if (opToks[1] == NULL)
     {
-        setOpTokError(noIntError(lineNumber));
+        setOpTokError(noIntError(lineNum));
         return;
     }
 
@@ -35,7 +35,7 @@ void montyPush(stack_t **stack, unsigned int lineNumber)
             continue;
         if (opToks[1][i] < '0' || opToks[1][i] > '9')
         {
-            setOpTokError(noIntError(lineNumber));
+            setOpTokError(noIntError(lineNum));
             return;
         }
     }
@@ -64,9 +64,9 @@ void montyPush(stack_t **stack, unsigned int lineNumber)
 /**
  * montyPall - Prints the values of a stack_t linked list.
  * @stack: A pointer to the top mode node of a stack_t linked list.
- * @lineNumber: The current working line number of a Monty bytecodes file.
+ * @lineNum: The current working line number of a Monty bytecodes file.
  */
-void montyPall(stack_t **stack, unsigned int lineNumber)
+void montyPall(stack_t **stack, unsigned int lineNum)
 {
     stack_t *tempNode = (*stack)->next;
 
@@ -75,19 +75,19 @@ void montyPall(stack_t **stack, unsigned int lineNumber)
         printf("%d\n", tempNode->n);
         tempNode = tempNode->next;
     }
-    (void)lineNumber;
+    (void)lineNum;
 }
 
 /**
  * montyPint - Prints the top value of a stack_t linked list.
  * @stack: A pointer to the top mode node of a stack_t linked list.
- * @lineNumber: The current working line number of a Monty bytecodes file.
+ * @lineNum: The current working line number of a Monty bytecodes file.
  */
-void montyPint(stack_t **stack, unsigned int lineNumber)
+void montyPint(stack_t **stack, unsigned int lineNum)
 {
     if ((*stack)->next == NULL)
     {
-        setOpTokError(pintError(lineNumber));
+        setOpTokError(pintError(lineNum));
         return;
     }
 
@@ -97,15 +97,15 @@ void montyPint(stack_t **stack, unsigned int lineNumber)
 /**
  * montyPop - Removes the top value element of a stack_t linked list.
  * @stack: A pointer to the top mode node of a stack_t linked list.
- * @lineNumber: The current working line number of a Monty bytecodes file.
+ * @lineNum: The current working line number of a Monty bytecodes file.
  */
-void montyPop(stack_t **stack, unsigned int lineNumber)
+void montyPop(stack_t **stack, unsigned int lineNum)
 {
     stack_t *next = NULL;
 
     if ((*stack)->next == NULL)
     {
-        setOpTokError(popError(lineNumber));
+        setOpTokError(popError(lineNum));
         return;
     }
 
@@ -119,15 +119,15 @@ void montyPop(stack_t **stack, unsigned int lineNumber)
 /**
  * montySwap - Swaps the top two value elements of a stack_t linked list.
  * @stack: A pointer to the top mode node of a stack_t linked list.
- * @lineNumber: The current working line number of a Monty bytecodes file.
+ * @lineNum: The current working line number of a Monty bytecodes file.
  */
-void montySwap(stack_t **stack, unsigned int lineNumber)
+void montySwap(stack_t **stack, unsigned int lineNum)
 {
     stack_t *tempNode;
 
     if ((*stack)->next == NULL || (*stack)->next->next == NULL)
     {
-        setOpTokError(shortStackError(lineNumber, "swap"));
+        setOpTokError(shortStackError(lineNum, "swap"));
         return;
     }
 
