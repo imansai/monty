@@ -47,7 +47,7 @@ void montyPush(stack_t **stack, unsigned int lineNum)
     new->n = atoi(op_toks[1]);
 
 
-    if (check_mode(*stack) == STACK)
+    if (checkMode(*stack) == STACK)
     {
         tmp = (*stack)->next;
         new->prev = *stack;
