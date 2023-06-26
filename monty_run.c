@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_LINE_LENGTH 1024
 
 void freeTokens(void);
 unsigned int tokenArrLen(void);
 int isEmptyLine(char *line, char *delims);
 void (*getOpFunc(char *opcode))(stack_t**, unsigned int);
 int runMonty(FILE *script_fd);
-
 
 /**
  * freeTokens - Frees the global array of strings.
@@ -18,18 +18,14 @@ void freeTokens(void)
 {
     size_t i = 0;
 
-
     if (op_toks == NULL)
         return;
-
 
     for (i = 0; op_toks[i]; i++)
         free(op_toks[i]);
 
-
     free(op_toks);
 }
-
 
 /**
  * tokenArrLen - Gets the length of current op_toks.
@@ -40,15 +36,13 @@ unsigned int tokenArrLen(void)
 {
     unsigned int toks_len = 0;
 
-
     while (op_toks[toks_len])
         toks_len++;
     return (toks_len);
 }
 
-
 /**
- * isEmptyLine - Checks if a line getline only contains delimiters.
+ * isEmptyLine - Checks if a line read from fgets only contains delimiters.
  * @line: A pointer to the line.
  * @delims: A string of delimiter characters.
  *
@@ -58,7 +52,6 @@ unsigned int tokenArrLen(void)
 int isEmptyLine(char *line, char *delims)
 {
     int i, j;
-
 
     for (i = 0; line[i]; i++)
     {
@@ -71,10 +64,8 @@ int isEmptyLine(char *line, char *delims)
             return (0);
     }
 
-
     return (1);
 }
-
 
 /**
  * getOpFunc - Matches opcode with corresponding function.
@@ -106,17 +97,14 @@ void (*getOpFunc(char *opcode))(stack_t**, unsigned int)
     };
     int i;
 
-
     for (i = 0; op_funcs[i].opcode; i++)
     {
         if (strcmp(opcode, op_funcs[i].opcode) == 0)
             return (op_funcs[i].f);
     }
 
-
     return (NULL);
 }
-
 
 /**
  * runMonty - Primary function to execute Monty script
@@ -127,17 +115,15 @@ void (*getOpFunc(char *opcode))(stack_t**, unsigned int)
 int runMonty(FILE *script_fd)
 {
     stack_t *stack = NULL;
-    char *line = NULL;
-    size_t len = 0, exit_status = EXIT_SUCCESS;
+    char line[MAX_LINE_LENGTH];
+    size_t exit_status = EXIT_SUCCESS;
     unsigned int lineNum = 0, prev_tok_len = 0;
     void (*op_func)(stack_t**, unsigned int);
-
 
     if (initStack(&stack) == EXIT_FAILURE)
         return (EXIT_FAILURE);
 
-
-    while (getline(&line, &len, script_fd) != -1)
+    while (fgets(line, sizeof(line), script_fd) != NULL)
     {
         lineNum++;
         op_toks = strtow(line, DELIMS);
@@ -176,14 +162,10 @@ int runMonty(FILE *script_fd)
     }
     freeStack(&stack);
 
-
-    if (line && *line == 0)
+    if (line[0] == '\0')
     {
-        free(line);
         return (handleErrorMalloc());
     }
 
-
-    free(line);
     return (exit_status);
 }
