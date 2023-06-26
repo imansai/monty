@@ -1,123 +1,136 @@
 #include "monty.h"
 
-void monty_add(stack_t **stack, unsigned int lineNum);
-void monty_sub(stack_t **stack, unsigned int lineNum);
-void monty_div(stack_t **stack, unsigned int lineNum);
-void monty_mul(stack_t **stack, unsigned int lineNum);
-void monty_mod(stack_t **stack, unsigned int lineNum);
+
+void montyAdd(stack_t **stack, unsigned int lineNum);
+void montySub(stack_t **stack, unsigned int lineNum);
+void montyDiv(stack_t **stack, unsigned int lineNum);
+void montyMul(stack_t **stack, unsigned int lineNum);
+void montyMod(stack_t **stack, unsigned int lineNum);
+
 
 /**
- * monty_add - Adds the top two values of a stack_t linked list.
- * @stack: A pointer to the top mode node of a stack_t linked list.
+ * montyAdd - Adds the top two values of alinked list.
+ * @stack: A pointer to the top mode node of alinked list.
  * @lineNum: The current working line number of a Monty bytecodes file.
  *
  * Description: The result is stored in the second value node
- *              from the top and the top value is removed.
+ *              from the top and the top value  is removed.
  */
-void monty_add(stack_t **stack, unsigned int lineNum)
+void montyAdd(stack_t **stack, unsigned int lineNum)
 {
     if ((*stack)->next == NULL || (*stack)->next->next == NULL)
     {
-        set_op_tok_error(short_stack_error(lineNum, "add"));
+        setErrorToken(handleErrorShortStack(lineNum, "add"));
         return;
     }
+
 
     (*stack)->next->next->n += (*stack)->next->n;
-    monty_pop(stack, lineNum);
+    montyPop(stack, lineNum);
 }
 
+
 /**
- * monty_sub - Subtracts the second value from the top of
- *             a stack_t linked list by the top value.
- * @stack: A pointer to the top mode node of a stack_t linked list.
+ * montySub - Subtracts the second value from the top of
+ *             alinked list by the top value.
+ * @stack: A pointer to the top mode node of alinked list.
  * @lineNum: The current working line number of a Monty bytecodes file.
  *
  * Description: The result is stored in the second value node
  *              from the top and the top value is removed.
  */
-void monty_sub(stack_t **stack, unsigned int lineNum)
+void montySub(stack_t **stack, unsigned int lineNum)
 {
     if ((*stack)->next == NULL || (*stack)->next->next == NULL)
     {
-        set_op_tok_error(short_stack_error(lineNum, "sub"));
+        setErrorToken(handleErrorShortStack(lineNum, "sub"));
         return;
     }
+
 
     (*stack)->next->next->n -= (*stack)->next->n;
-    monty_pop(stack, lineNum);
+    montyPop(stack, lineNum);
 }
 
+
 /**
- * monty_div - Divides the second value from the top of
- *             a stack_t linked list by the top value.
- * @stack: A pointer to the top mode node of a stack_t linked list.
+ * montyDiv - Divides the second value from the top of
+ *             alinked list by the top value.
+ * @stack: A pointer to the top mode node of alinked list.
  * @lineNum: The current working line number of a Monty bytecodes file.
  *
  * Description: The result is stored in the second value node
  *              from the top and the top value is removed.
  */
-void monty_div(stack_t **stack, unsigned int lineNum)
+void montyDiv(stack_t **stack, unsigned int lineNum)
 {
     if ((*stack)->next == NULL || (*stack)->next->next == NULL)
     {
-        set_op_tok_error(short_stack_error(lineNum, "div"));
+        setErrorToken(handleErrorShortStack(lineNum, "div"));
         return;
     }
 
+
     if ((*stack)->next->n == 0)
     {
-        set_op_tok_error(div_error(lineNum));
+        setErrorToken(handleErrorDiv(lineNum));
         return;
     }
+
 
     (*stack)->next->next->n /= (*stack)->next->n;
-    monty_pop(stack, lineNum);
+    montyPop(stack, lineNum);
 }
 
+
 /**
- * monty_mul - Multiplies the second value from the top of
- *             a stack_t linked list by the top value.
- * @stack: A pointer to the top mode node of a stack_t linked list.
+ * montyMul - Multiplies the second value from the top of
+ *             alinked list by the top value.
+ * @stack: A pointer to the top mode node of alinked list.
  * @lineNum: The current working line number of a Monty bytecodes file.
  *
  * Description: The result is stored in the second value node
  *              from the top and the top value is removed.
  */
-void monty_mul(stack_t **stack, unsigned int lineNum)
+void montyMul(stack_t **stack, unsigned int lineNum)
 {
     if ((*stack)->next == NULL || (*stack)->next->next == NULL)
     {
-        set_op_tok_error(short_stack_error(lineNum, "mul"));
+        setErrorToken(handleErrorShortStack(lineNum, "mul"));
         return;
     }
+
 
     (*stack)->next->next->n *= (*stack)->next->n;
-    monty_pop(stack, lineNum);
+    montyPop(stack, lineNum);
 }
 
+
 /**
- * monty_mod - Computes the modulus of the second value from the
- *             top of a stack_t linked list by the top value.
- * @stack: A pointer to the top mode node of a stack_t linked list.
+ * montyMod - Computes the modulus of the second value from the
+ *             top of alinked list  by the top value.
+ * @stack: A pointer to the top mode node of alinked list.
  * @lineNum: The current working line number of a Monty bytecodes file.
  *
  * Description: The result is stored in the second value node
  *              from the top and the top value is removed.
  */
-void monty_mod(stack_t **stack, unsigned int lineNum)
+void montyMod(stack_t **stack, unsigned int lineNum)
 {
     if ((*stack)->next == NULL || (*stack)->next->next == NULL)
     {
-        set_op_tok_error(short_stack_error(lineNum, "mod"));
+        setErrorToken(handleErrorShortStack(lineNum, "mod"));
         return;
     }
+
 
     if ((*stack)->next->n == 0)
     {
-        set_op_tok_error(div_error(lineNum));
+        setErrorToken(handleErrorDiv(lineNum));
         return;
     }
 
+
     (*stack)->next->next->n %= (*stack)->next->n;
-    monty_pop(stack, lineNum);
+    montyPop(stack, lineNum);
 }

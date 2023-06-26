@@ -5,48 +5,48 @@
 void freeTokens(void);
 unsigned int tokenArrLen(void);
 int isEmptyLine(char *line, char *delims);
-void (*getOpFunction(char *opcode))(stack_t**, unsigned int);
-int runMonty(FILE *scriptFd);
+void (*getOpFunc(char *opcode))(stack_t**, unsigned int);
+int runMonty(FILE *script_fd);
 
 
 /**
- * freeTokens - Frees the global opTokens array of strings.
+ * freeTokens - Frees the global array of strings.
  */
 void freeTokens(void)
 {
-    size_t index = 0;
+    size_t i = 0;
 
 
-    if (opTokens == NULL)
+    if (op_toks == NULL)
         return;
 
 
-    for (index = 0; opTokens[index]; index++)
-        free(opTokens[index]);
+    for (i = 0; op_toks[i]; i++)
+        free(op_toks[i]);
 
 
-    free(opTokens);
+    free(op_toks);
 }
 
 
 /**
- * tokenArrLen - Gets the length of current opTokens.
+ * tokenArrLen - Gets the length of current op_toks.
  *
- * Return: Length of current opTokens (as int).
+ * Return: Length of current op_toks (as int).
  */
 unsigned int tokenArrLen(void)
 {
-    unsigned int toksLen = 0;
+    unsigned int toks_len = 0;
 
 
-    while (opTokens[toksLen])
-        toksLen++;
-    return (toksLen);
+    while (op_toks[toks_len])
+        toks_len++;
+    return (toks_len);
 }
 
 
 /**
- * isEmptyLine - Checks if a line read from getline only contains delimiters.
+ * isEmptyLine - Checks if a line getline only contains delimiters.
  * @line: A pointer to the line.
  * @delims: A string of delimiter characters.
  *
@@ -75,14 +75,14 @@ int isEmptyLine(char *line, char *delims)
 
 
 /**
- * getOpFunction - Matches an opcode with its corresponding function.
- * @opcode: The opcode to match.
+ * getOpFunc - Matches opcode with corresponding function.
+ * @opcode: The opcode to be matched
  *
- * Return: A pointer to the corresponding function.
+ * Return: A pointer to the corresponding
  */
-void (*getOpFunction(char *opcode))(stack_t**, unsigned int)
+void (*getOpFunc(char *opcode))(stack_t**, unsigned int)
 {
-    instruction_t opFunctions[] = {
+    instruction_t op_funcs[] = {
         {"push", montyPush},
         {"pall", montyPall},
         {"pint", montyPint},
@@ -102,13 +102,13 @@ void (*getOpFunction(char *opcode))(stack_t**, unsigned int)
         {"queue", montyQueue},
         {NULL, NULL}
     };
-    int index;
+    int i;
 
 
-    for (index = 0; opFunctions[index].opcode; index++)
+    for (i = 0; op_funcs[i].opcode; i++)
     {
-        if (strcmp(opcode, opFunctions[index].opcode) == 0)
-            return (opFunctions[index].f);
+        if (strcmp(opcode, op_funcs[i].opcode) == 0)
+            return (op_funcs[i].f);
     }
 
 
@@ -117,71 +117,71 @@ void (*getOpFunction(char *opcode))(stack_t**, unsigned int)
 
 
 /**
- * runMonty - Primary function to execute a Monty bytecodes script.
- * @scriptFd: File descriptor for an open Monty bytecodes script.
+ * runMonty - Primary function to execute Monty script
+ * @script_fd: File descriptor for open Monty script
  *
- * Return: EXIT_SUCCESS on success, respective error code on failure.
+ * Return: EXIT_SUCCESS on success, error code on failure.
  */
-int runMonty(FILE *scriptFd)
+int runMonty(FILE *script_fd)
 {
     stack_t *stack = NULL;
     char *line = NULL;
-    size_t len = 0, exitCode = EXIT_SUCCESS;
-    unsigned int lineNum = 0, prevTokLen = 0;
-    void (*opFunction)(stack_t**, unsigned int);
+    size_t len = 0, exit_status = EXIT_SUCCESS;
+    unsigned int lineNum = 0, prev_tok_len = 0;
+    void (*op_func)(stack_t**, unsigned int);
 
 
-    if (initStack(&stack) == EXIT_FAILURE)
+    if (init_stack(&stack) == EXIT_FAILURE)
         return (EXIT_FAILURE);
 
 
-    while (getline(&line, &len, scriptFd) != -1)
+    while (getline(&line, &len, script_fd) != -1)
     {
         lineNum++;
-        opTokens = strToWords(line, DELIMS);
-        if (opTokens == NULL)
+        op_toks = strtow(line, DELIMS);
+        if (op_toks == NULL)
         {
             if (isEmptyLine(line, DELIMS))
                 continue;
-            freeStack(&stack);
-            return (mallocError());
+            free_stack(&stack);
+            return (handleErrorMalloc());
         }
-        else if (opTokens[0][0] == '#') /* comment line */
+        else if (op_toks[0][0] == '#')
         {
             freeTokens();
             continue;
         }
-        opFunction = getOpFunction(opTokens[0]);
-        if (opFunction == NULL)
+        op_func = getOpFunc(op_toks[0]);
+        if (op_func == NULL)
         {
-            freeStack(&stack);
-            exitCode = unknownOpError(opTokens[0], lineNum);
+            free_stack(&stack);
+            exit_status = handleErrorUnknownOp(op_toks[0], lineNum);
             freeTokens();
             break;
         }
-        prevTokLen = tokenArrLen();
-        opFunction(&stack, lineNum);
-        if (tokenArrLen() != prevTokLen)
+        prev_tok_len = tokenArrLen();
+        op_func(&stack, lineNum);
+        if (tokenArrLen() != prev_tok_len)
         {
-            if (opTokens && opTokens[prevTokLen])
-                exitCode = atoi(opTokens[prevTokLen]);
+            if (op_toks && op_toks[prev_tok_len])
+                exit_status = atoi(op_toks[prev_tok_len]);
             else
-                exitCode = EXIT_FAILURE;
+                exit_status = EXIT_FAILURE;
             freeTokens();
             break;
         }
         freeTokens();
     }
-    freeStack(&stack);
+    free_stack(&stack);
 
 
     if (line && *line == 0)
     {
         free(line);
-        return (mallocError());
+        return (handleErrorMalloc());
     }
 
 
     free(line);
-    return (exitCode);
+    return (exit_status);
 }
