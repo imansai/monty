@@ -1,47 +1,49 @@
 #include <stdlib.h>
 
 
-char **split_string(char *str, char *delimiters);
-int is_delimiter(char ch, char *delimiters);
-int get_word_length(char *str, char *delimiters);
-int get_word_count(char *str, char *delimiters);
-char *get_next_word(char *str, char *delimiters);
+char **strtow(char *str, char *delims);
+int isDelimeter(char ch, char *delims);
+int getWordLength(char *str, char *delims);
+int getWordCount(char *str, char *delims);
+char *getNextWord(char *str, char *delims);
 
 
 /**
- * split_string - splits a string into words
+ * strtow - takes a string and separates its words
  *
- * @str: string to be split into words
- * @delimiters: delimiters to use for word splitting
+ * @str: string to separate into words
+ * @delims: delimiters to use to delimit words
  *
  * Return: 2D array of pointers to each word
  */
 
 
-char **split_string(char *str, char *delimiters)
+char **strtow(char *str, char *delims)
 {
     char **words = NULL;
-    int word_count, word_length, n, i = 0;
+    int wc, wordLen, n, i = 0;
 
 
     if (str == NULL || !*str)
         return (NULL);
-    word_count = get_word_count(str, delimiters);
+    wc = getWordCount(str, delims);
 
 
-    if (word_count == 0)
+
+
+    if (wc == 0)
         return (NULL);
-    words = malloc((word_count + 1) * sizeof(char *));
+    words = malloc((wc + 1) * sizeof(char *));
     if (words == NULL)
         return (NULL);
-    while (i < word_count)
+    while (i < wc)
     {
-        word_length = get_word_length(str, delimiters);
-        if (is_delimiter(*str, delimiters))
+        wordLen = getWordLength(str, delims);
+        if (isDelimeter(*str, delims))
         {
-            str = get_next_word(str, delimiters);
+            str = getNextWord(str, delims);
         }
-        words[i] = malloc((word_length + 1) * sizeof(char));
+        words[i] = malloc((wordLen + 1) * sizeof(char));
         if (words[i] == NULL)
         {
             while (i >= 0)
@@ -53,13 +55,13 @@ char **split_string(char *str, char *delimiters)
             return (NULL);
         }
         n = 0;
-        while (n < word_length)
+        while (n < wordLen)
         {
             words[i][n] = *(str + n);
             n++;
         }
         words[i][n] = '\0'; /* set end of str */
-        str = get_next_word(str, delimiters);
+        str = getNextWord(str, delims);
         i++;
     }
     words[i] = NULL; /* last element is null for iteration */
@@ -68,23 +70,24 @@ char **split_string(char *str, char *delimiters)
 
 
 /**
- * is_delimiter - checks if a character is a delimiter
+ * isDelimeter - checks if stream has delimiter char
  *
- * @ch: character to be checked
- * @delimiters: pointer to a null-terminated array of delimiters
+ * @ch: character in stream
  *
- * Return: 1 (success) or 0 (failure)
+ * @delims: Pointer to null terminated array of delimiters
+ *
+ * Return: 1 (success) 0 (failure)
  */
 
 
-int is_delimiter(char ch, char *delimiters)
+int isDelimeter(char ch, char *delims)
 {
     int i = 0;
 
 
-    while (delimiters[i])
+    while (delims[i])
     {
-        if (delimiters[i] == ch)
+        if (delims[i] == ch)
             return (1);
         i++;
     }
@@ -93,89 +96,89 @@ int is_delimiter(char ch, char *delimiters)
 
 
 /**
- * get_word_length - gets the word length of the current word in a string
+ * getWordLength - gets the word length of word in str
  *
- * @str: string to get the word length from the current word
- * @delimiters: delimiters to use for word splitting
+ * @str: string to get word length from current word
+ * @delims: delimiters to use to delimit words
  *
- * Return: word length of the current word
+ * Return: word length of current word
  */
 
 
-int get_word_length(char *str, char *delimiters)
+int getWordLength(char *str, char *delims)
 {
-    int word_length = 0, pending = 1, index = 0;
+    int wLen = 0, pending = 1, i = 0;
 
 
-    while (*(str + index))
+    while (*(str + i))
     {
-        if (is_delimiter(str[index], delimiters))
+        if (isDelimeter(str[i], delims))
             pending = 1;
         else if (pending)
         {
-            word_length++;
+            wLen++;
         }
-        if (word_length > 0 && is_delimiter(str[index], delimiters))
+        if (wLen > 0 && isDelimeter(str[i], delims))
             break;
-        index++;
+        i++;
     }
-    return (word_length);
+    return (wLen);
 }
 
 
 /**
- * get_word_count - gets the word count of a string
+ * getWordCount - gets the word count of a string
  *
- * @str: string to get the word count from
- * @delimiters: delimiters to use for word splitting
+ * @str: string to get word count from
+ * @delims: delimiters to use to delimit words
  *
  * Return: the word count of the string
  */
 
 
-int get_word_count(char *str, char *delimiters)
+int getWordCount(char *str, char *delims)
 {
-    int word_count = 0, pending = 1, index = 0;
+    int wc = 0, pending = 1, i = 0;
 
 
-    while (*(str + index))
+    while (*(str + i))
     {
-        if (is_delimiter(str[index], delimiters))
+        if (isDelimeter(str[i], delims))
             pending = 1;
         else if (pending)
         {
             pending = 0;
-            word_count++;
+            wc++;
         }
-        index++;
+        i++;
     }
-    return (word_count);
+    return (wc);
 }
 
 
 /**
- * get_next_word - gets the next word in a string
+ * getNextWord - gets next word in string
  *
- * @str: string to get the next word from
- * @delimiters: delimiters to use for word splitting
+ * @str: string to get next word from
+ * @delims: delimiters to be used to delimit words
  *
- * Return: pointer to the first character of the next word
+ * Return: pointer to first char of next word
  */
 
 
-char *get_next_word(char *str, char *delimiters)
+char *getNextWord(char *str, char *delims)
 {
     int pending = 0;
-    int index = 0;
+    int i = 0;
 
 
-    while (*(str + index))
+    while (*(str + i))
     {
-        if (is_delimiter(str[index], delimiters))
+        if (isDelimeter(str[i], delims))
             pending = 1;
         else if (pending)
             break;
-        index++;
+        i++;
     }
-    return (str + index);
+    return (str + i);
 }
