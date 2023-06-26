@@ -131,7 +131,7 @@ int runMonty(FILE *script_fd)
     void (*op_func)(stack_t**, unsigned int);
 
 
-    if (init_stack(&stack) == EXIT_FAILURE)
+    if (initStack(&stack) == EXIT_FAILURE)
         return (EXIT_FAILURE);
 
 
@@ -143,7 +143,7 @@ int runMonty(FILE *script_fd)
         {
             if (isEmptyLine(line, DELIMS))
                 continue;
-            free_stack(&stack);
+            freeStack(&stack);
             return (handleErrorMalloc());
         }
         else if (op_toks[0][0] == '#')
@@ -154,7 +154,7 @@ int runMonty(FILE *script_fd)
         op_func = getOpFunc(op_toks[0]);
         if (op_func == NULL)
         {
-            free_stack(&stack);
+            freeStack(&stack);
             exit_status = handleErrorUnknownOp(op_toks[0], lineNum);
             freeTokens();
             break;
@@ -172,7 +172,7 @@ int runMonty(FILE *script_fd)
         }
         freeTokens();
     }
-    free_stack(&stack);
+    freeStack(&stack);
 
 
     if (line && *line == 0)

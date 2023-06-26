@@ -12,7 +12,7 @@ void setErrorToken(int error_code)
     char **new_toks = NULL;
 
 
-    toks_len = token_arr_len();
+    toks_len = tokenArrLen();
     new_toks = malloc(sizeof(char *) * (toks_len + 2));
     if (!op_toks)
     {
@@ -24,7 +24,7 @@ void setErrorToken(int error_code)
         new_toks[i] = op_toks[i];
         i++;
     }
-    exit_str = get_int(error_code);
+    exit_str = getInt(error_code);
     if (!exit_str)
     {
         free(new_toks);
